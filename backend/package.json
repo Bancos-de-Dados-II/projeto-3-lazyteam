@@ -1,0 +1,29 @@
+{
+  "name": "projeto-2-novo-lazyteam",
+  "version": "1.0.0",
+  "description": "[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/-TpqR4IR)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bancos-de-Dados-II/projeto-2-novo-lazyteam.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Bancos-de-Dados-II/projeto-2-novo-lazyteam/issues"
+  },
+  "homepage": "https://github.com/Bancos-de-Dados-II/projeto-2-novo-lazyteam#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "mongodb": "^6.18.0",
+    "mongoose": "^8.17.1",
+    "neo4j-driver": "^5.28.1"
+  }
+}

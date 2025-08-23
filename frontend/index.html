@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Propriedades Rurais</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <!-- Leaflet Geocoder CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <!-- MongoDB Charts SDK -->
+    <script src="https://unpkg.com/@mongodb-js/charts-embed-dom"></script>
+</head>
+<body>
+    <header>
+        <h1>Gestão de Propriedades Rurais</h1>
+    </header>
+
+    <main>
+        <section class="form-section">
+            <h2>Cadastrar/Atualizar Propriedade</h2>
+            <form id="propriedadeForm">
+                <input type="hidden" id="propriedadeId">
+                
+                <div class="form-group">
+                    <label for="nome">Nome da Propriedade:</label>
+                    <input type="text" id="nome" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="descricao">Descrição:</label>
+                    <textarea id="descricao" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="areaHectares">Área (Hectares ):</label>
+                    <input type="number" id="areaHectares" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="culturaPrincipal">Cultura Principal:</label>
+                    <input type="text" id="culturaPrincipal">
+                </div>
+
+                <div class="form-group">
+                    <label for="tags">Tags (separadas por vírgula):</label>
+                    <input type="text" id="tags">
+                </div>
+
+                <div class="form-group">
+                    <label for="searchLocation">Buscar Localização:</label>
+                    <input type="text" id="searchLocation" placeholder="Digite um endereço ou local...">
+                    <button type="button" id="geocodeButton">Buscar no Mapa</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Localização (Latitude, Longitude):</label>
+                    <input type="text" id="latitude" placeholder="Latitude" readonly required>
+                    <input type="text" id="longitude" placeholder="Longitude" readonly required>
+                    <small>Clique no mapa para selecionar a localização.</small>
+                </div>
+
+                <button type="submit">Salvar Propriedade</button>
+                <button type="button" id="cancelEdit" style="display:none;">Cancelar Edição</button>
+            </form>
+        </section>
+
+        <section class="map-section">
+            <h2>Mapa das Propriedades</h2>
+            <div id="map"></div>
+        </section>
+
+        <!-- Nova seção do Dashboard -->
+        <section class="dashboard-section">
+            <h2>Dashboard de Análise</h2>
+            <button id="dashboard-toggle" class="dashboard-toggle-btn">
+                <span id="dashboard-toggle-text">Mostrar Dashboard</span>
+            </button>
+            
+            <div id="dashboard-content" class="dashboard-content">
+                <!-- Estatísticas resumidas -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3 id="total-propriedades">-</h3>
+                        <p>Total de Propriedades</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="area-total">-</h3>
+                        <p>Área Total (ha)</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="culturas-diferentes">-</h3>
+                        <p>Culturas Diferentes</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="area-media">-</h3>
+                        <p>Área Média (ha)</p>
+                    </div>
+                </div>
+
+                <!-- Charts do MongoDB -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Distribuição por Cultura Principal</h3>
+                        <div id="chart-cultura" class="chart-container">
+                            <div class="loading">Carregando gráfico...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3>Distribuição Geográfica das Propriedades</h3>
+                        <div id="chart-mapa" class="chart-container">
+                            <div class="loading">Carregando mapa...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3>Maiores Propriedades</h3>
+                        <div id="chart-tabela" class="chart-container">
+                            <div class="loading">Carregando tabela...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="list-section">
+            <h2>Propriedades Cadastradas</h2>
+            <div class="search-bar">
+                <input type="text" id="searchText" placeholder="Buscar por nome, descrição, cultura ou tags...">
+                <button type="button" id="searchButton">Buscar</button>
+            </div>
+            <div id="propriedadesList" class="card-container"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Gestão de Propriedades Rurais</p>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Leaflet Geocoder JS -->
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <!-- Nosso script -->
+    <script src="script.js"></script>
+</body>
+</html>
