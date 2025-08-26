@@ -22,7 +22,7 @@ const PropriedadeSchema = new mongoose.Schema({
     // Campo para localização GeoJSON (Point)
     localizacao: {
         type: {
-            type: String, // Tipo GeoJSON, deve ser 'Point'
+            type: String,   
             enum: ['Point'],
             required: true
         },
@@ -37,6 +37,16 @@ const PropriedadeSchema = new mongoose.Schema({
             }
         }
     },
+
+     city: {
+        type: String,
+        trim: true
+    },
+    state: {
+        type: String,
+        trim: true
+    },
+
     // Campos para Full-text Search
     tags: {
         type: [String],

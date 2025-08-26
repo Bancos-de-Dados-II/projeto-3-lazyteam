@@ -24,6 +24,7 @@
     "express": "^5.1.0",
     "mongodb": "^6.18.0",
     "mongoose": "^8.17.1",
-    "neo4j-driver": "^5.28.1"
+    "neo4j-driver": "^5.28.1",
+    "node-fetch": "^3.3.2"
   }
 }
