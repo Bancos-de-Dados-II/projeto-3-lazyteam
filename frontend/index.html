@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestão de Propriedades Rurais</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <!-- Leaflet Geocoder CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-    <!-- MongoDB Charts SDK -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://unpkg.com/@mongodb-js/charts-embed-dom"></script>
 </head>
 <body>
@@ -18,88 +16,100 @@
     </header>
 
     <main>
-        <section class="form-section">
-            <h2>Cadastrar/Atualizar Propriedade</h2>
-            <form id="propriedadeForm">
-                <input type="hidden" id="propriedadeId">
-                
-                <div class="form-group">
-                    <label for="nome">Nome da Propriedade:</label>
-                    <input type="text" id="nome" required>
-                </div>
+        <!-- Seção Superior: Formulário e Mapa -->
+        <section class="top-section">
+            <div class="form-container">
+                <h2>Cadastrar/Atualizar Propriedade</h2>
+                <form id="propriedadeForm">
+                    <input type="hidden" id="propriedadeId">
+                    <div class="form-group">
+                        <label for="nome">Nome da Propriedade:</label>
+                        <input type="text" id="nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="descricao">Descrição:</label>
+                        <textarea id="descricao" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="areaHectares">Área (hectares ):</label>
+                        <input type="number" id="areaHectares" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="culturaPrincipal">Cultura Principal:</label>
+                        <input type="text" id="culturaPrincipal">
+                    </div>
+                    <div class="form-group">
+                        <label for="tags">Tags (separadas por vírgula):</label>
+                        <input type="text" id="tags">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="searchLocation">Buscar Localização:</label>
+                        <div class="input-with-button">
+                            <input type="text" id="searchLocation" placeholder="Digite um endereço ou local...">
+                            <button type="button" id="geocodeButton" class="icon-button"><i class="fas fa-search"></i></button>
+                        </div>
+                        <small id="map-instruction">Clique no mapa para selecionar a localização.</small>
+                    </div>
 
-                <div class="form-group">
-                    <label for="descricao">Descrição:</label>
-                    <textarea id="descricao" rows="3"></textarea>
-                </div>
+                    <div class="form-group" style="display: none;">
+                        <label>Latitude:</label>
+                        <input type="text" id="latitude" readonly required>
+                    </div>
+                    <div class="form-group" style="display: none;">
+                        <label>Longitude:</label>
+                        <input type="text" id="longitude" readonly required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="areaHectares">Área (Hectares ):</label>
-                    <input type="number" id="areaHectares" step="0.01" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="culturaPrincipal">Cultura Principal:</label>
-                    <input type="text" id="culturaPrincipal">
-                </div>
-
-                <div class="form-group">
-                    <label for="tags">Tags (separadas por vírgula):</label>
-                    <input type="text" id="tags">
-                </div>
-
-                <div class="form-group">
-                    <label for="searchLocation">Buscar Localização:</label>
-                    <input type="text" id="searchLocation" placeholder="Digite um endereço ou local...">
-                    <button type="button" id="geocodeButton">Buscar no Mapa</button>
-                </div>
-
-                <div class="form-group">
-                    <label>Localização (Latitude, Longitude):</label>
-                    <input type="text" id="latitude" placeholder="Latitude" readonly required>
-                    <input type="text" id="longitude" placeholder="Longitude" readonly required>
-                    <small>Clique no mapa para selecionar a localização.</small>
-                </div>
-
-                <button type="submit">Salvar Propriedade</button>
-                <button type="button" id="cancelEdit" style="display:none;">Cancelar Edição</button>
-            </form>
+                    <button type="submit">Salvar Propriedade</button>
+                    <button type="button" id="cancelEdit" style="display: none;">Cancelar Edição</button>
+                </form>
+            </div>
+            <div class="map-container">
+                <h2>Mapa das Propriedades</h2>
+                <div id="map"></div>
+            </div>
         </section>
 
-        <section class="map-section">
-            <h2>Mapa das Propriedades</h2>
-            <div id="map"></div>
+        <!-- Seção de Listagem de Propriedades -->
+        <section class="list-section">
+            <div class="list-header">
+                <h2>Propriedades Cadastradas</h2>
+                <div class="search-bar">
+                    <input type="text" id="searchText" placeholder="Buscar por nome, descrição, cultura ou tags...">
+                    <button type="button" id="searchButton">Buscar</button>
+                </div>
+            </div>
+            <div id="propriedadesList" class="card-container"></div>
+            <div class="pagination-controls">
+                <button id="prevPageButton">Anterior</button>
+                <span id="pageInfo">Página 1 de 1</span>
+                <button id="nextPageButton">Próximo</button>
+            </div>
         </section>
 
-        <!-- Nova seção do Dashboard -->
+        <!-- Seção do Dashboard -->
         <section class="dashboard-section">
-            <h2>Dashboard de Análise</h2>
-            <button id="dashboard-toggle" class="dashboard-toggle-btn">
-                <span id="dashboard-toggle-text">Mostrar Dashboard</span>
-            </button>
-            
-            <div id="dashboard-content" class="dashboard-content">
-                <!-- Estatísticas resumidas -->
+            <h2>Dashboard com os Charts do Mongo</h2>
+            <div id="dashboard-content" class="dashboard-content show">
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <h3 id="total-propriedades">-</h3>
-                        <p>Total de Propriedades</p>
+                        <h3>Total de Propriedades</h3>
+                        <p id="total-propriedades">0</p>
                     </div>
                     <div class="stat-card">
-                        <h3 id="area-total">-</h3>
-                        <p>Área Total (ha)</p>
+                        <h3>Área Total (ha)</h3>
+                        <p id="area-total">0</p>
                     </div>
                     <div class="stat-card">
-                        <h3 id="culturas-diferentes">-</h3>
-                        <p>Culturas Diferentes</p>
+                        <h3>Culturas Diferentes</h3>
+                        <p id="culturas-diferentes">0</p>
                     </div>
                     <div class="stat-card">
-                        <h3 id="area-media">-</h3>
-                        <p>Área Média (ha)</p>
+                        <h3>Área Média (ha)</h3>
+                        <p id="area-media">0</p>
                     </div>
                 </div>
-
-                <!-- Charts do MongoDB -->
                 <div class="charts-grid">
                     <div class="chart-card">
                         <h3>Distribuição por Cultura Principal</h3>
@@ -107,7 +117,6 @@
                             <div class="loading">Carregando gráfico...</div>
                         </div>
                     </div>
-                    
                     <div class="chart-card">
                         <h3>Distribuição Geográfica das Propriedades</h3>
                         <div id="chart-mapa" class="chart-container">
@@ -125,13 +134,9 @@
             </div>
         </section>
 
-        <section class="list-section">
-            <h2>Propriedades Cadastradas</h2>
-            <div class="search-bar">
-                <input type="text" id="searchText" placeholder="Buscar por nome, descrição, cultura ou tags...">
-                <button type="button" id="searchButton">Buscar</button>
-            </div>
-            <div id="propriedadesList" class="card-container"></div>
+        <section class="neo4j-section">
+            <h2>Relacionamentos de Culturas (Neo4J)</h2>
+            <div id="relacionamentos-culturas-container" class="list-group"></div>
         </section>
     </main>
 
@@ -139,11 +144,8 @@
         <p>&copy; 2025 Gestão de Propriedades Rurais</p>
     </footer>
 
-    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Leaflet Geocoder JS -->
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-    <!-- Nosso script -->
     <script src="script.js"></script>
 </body>
 </html>
